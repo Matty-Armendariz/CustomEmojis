@@ -26,6 +26,19 @@ async function executeQuery(query: string, params: any[] = []): Promise<any> {
   }
 }
 
+async function getEmojis(query: string, params: any[] = []): Promise<any> {
+    const connection = await pool.getConnection();
+
+    try{
+        return executeQuery('SELECT * FROM emoji');
+    }  catch (error){
+        throw error;
+    } finally { 
+        connection.release();
+    }
+
+}
+
 // Example usage
 async function exampleUsage() {
   try {
