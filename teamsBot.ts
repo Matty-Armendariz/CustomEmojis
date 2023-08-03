@@ -48,7 +48,7 @@ export class TeamsBot extends TeamsActivityHandler {
       composeExtension: {
         type: "result",
         attachmentLayout: "list",
-        attachments: [CardFactory.thumbnailCard(obj.name, obj.images)],
+        attachments: [CardFactory.thumbnailCard('', obj.images)],
       },
     };
   }
