@@ -1,12 +1,7 @@
 import { default as axios } from "axios";
+import { getEmojis } from "./DBconnection"
 import * as querystring from "querystring";
-import {
-  TeamsActivityHandler,
-  CardFactory,
-  TurnContext,
-  MessagingExtensionQuery,
-  MessagingExtensionResponse,
-} from "botbuilder";
+import { TeamsActivityHandler, CardFactory, CardImage, TurnContext, MessagingExtensionQuery, MessagingExtensionResponse } from "botbuilder";
 
 export interface DataInterface {
   likeCount: number;
@@ -24,24 +19,19 @@ export class TeamsBot extends TeamsActivityHandler {
     query: MessagingExtensionQuery
   ): Promise<MessagingExtensionResponse> {
     const searchQuery = query.parameters[0].value;
-    const response = await axios.get(
-      `http://registry.npmjs.com/-/v1/search?${querystring.stringify({
-        text: searchQuery,
-        size: 8,
-      })}`
-    );
+    const response = getEmojis(searchQuery);
 
     const attachments = [];
-    response.data.objects.forEach((obj) => {
-      const heroCard = CardFactory.heroCard(obj.package.name);
-      const preview = CardFactory.heroCard(obj.package.name);
-      preview.content.tap = {
-        type: "invoke",
-        value: { name: obj.package.name, description: obj.package.description },
-      };
-      const attachment = { ...heroCard, preview };
-      attachments.push(attachment);
-    });
+    // response.data.objects.forEach((obj) => {
+    //   const heroCard = CardFactory.heroCard(obj.package.name);
+    //   const preview = CardFactory.heroCard(obj.package.name, []);
+    //   preview.content.tap = {
+    //     type: "invoke",
+    //     value: { name: obj.package.name, description: obj.package.description },
+    //   };
+    //   const attachment = { ...heroCard, preview };
+    //   attachments.push(attachment);
+    // });
 
     return {
       composeExtension: {

@@ -26,7 +26,7 @@ async function executeQuery(query: string, params: any[] = []): Promise<any> {
   }
 }
 
-async function getEmojis(query: string, params: any[] = []): Promise<any> {
+export async function getEmojis(query: string, params: any[] = []): Promise<any> {
     const connection = await pool.getConnection();
 
     try{
