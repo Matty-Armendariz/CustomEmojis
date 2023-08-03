@@ -1,33 +1,39 @@
-const express = require('express');
-const mysql = require('mysql2');
+// Import required modules
+import mysql from 'mysql2/promise';
 
-const app = express();
+// Connection settings
+const dbConfig = {
+  host: 'srv734.hstgr.io', // Replace with your MariaDB host
+  user: 'u364770181_MI24', // Replace with your database username
+  password: 'GoodGuys2023', // Replace with your database password
+  database: 'u364770181_MI24', // Replace with your database name
+};
 
-// MySQL connection configuration
-const connection = mysql.createConnection({
-  host: 'jdbc:mysql://185.212.71.204/u364770181_MI24',
-  user: 'u364770181_MI24',
-  password: 'GoodGuys2023',
-  database: 'u364770181_MI24',
-});
+// Create the database connection pool
+const pool = mysql.createPool(dbConfig);
 
-// API to fetch data from MySQL
-app.get('/api/data', (req, res) => {
-  const query = 'SELECT * FROM emoji';
-  connection.query(query, (error, results) => {
-    if (error) {
-      console.error('Error executing query:', error);
-      res.status(500).json({ error: 'An error occurred' });
-    } else {
-      res.json(results);
-    }
-  });
-});
+// Function to execute queries
+async function executeQuery(query: string, params: any[] = []): Promise<any> {
+  const connection = await pool.getConnection();
 
-// Other APIs for database operations go here...
+  try {
+    const [rows] = await connection.query(query, params);
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
 
-// Start the server
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// Example usage
+async function exampleUsage() {
+  try {
+    const rows = await executeQuery('SELECT * FROM emoji');
+    console.log(rows);
+  } catch (error) {
+    console.error('Error executing query:', error);
+  }
+}
+
+exampleUsage();
