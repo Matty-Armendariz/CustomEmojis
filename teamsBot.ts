@@ -22,16 +22,7 @@ export class TeamsBot extends TeamsActivityHandler {
     const response = getEmojis(searchQuery);
 
     const attachments = [];
-    // response.data.objects.forEach((obj) => {
-    //   const heroCard = CardFactory.heroCard(obj.package.name);
-    //   const preview = CardFactory.heroCard(obj.package.name, []);
-    //   preview.content.tap = {
-    //     type: "invoke",
-    //     value: { name: obj.package.name, description: obj.package.description },
-    //   };
-    //   const attachment = { ...heroCard, preview };
-    //   attachments.push(attachment);
-    // });
+    console.log(response);
 
     return {
       composeExtension: {

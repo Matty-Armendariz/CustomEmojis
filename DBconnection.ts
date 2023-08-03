@@ -17,7 +17,8 @@ async function executeQuery(query: string, params: any[] = []): Promise<any> {
   const connection = await pool.getConnection();
 
   try {
-    const [rows] = await connection.query(query, params);
+    const rows = await connection.query(query, params);
+    console.log(rows);
     return rows;
   } catch (error) {
     throw error;
