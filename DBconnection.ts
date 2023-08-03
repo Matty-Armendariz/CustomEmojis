@@ -1,5 +1,6 @@
 // Import required modules
 import mysql from 'mysql2/promise';
+import Jimp from "jimp";
 
 interface EmojiData {
     id: number;
@@ -60,10 +61,13 @@ export async function getEmoji(name: string): Promise<any>{
     if (rows) {
       console.log(rows);
       const matchingString = rows[0][0].image.toString();
+      // const matchingString = rows[0].image.toString('base64');
+      console.log(matchingString.type)
+      const buffer = Buffer.from(matchingString, 'base64');
       // const myBlob = new Blob([matchingString], { type: 'text/plain' });
       // Convert the Blob back to an Image
-      const originalImageType = 'image/jpeg'; // Replace with the actual image type you have before converting to Blob
-      const imageElement = await blobToImage(matchingString, originalImageType);
+      const originalImageType = 'image/png'; // Replace with the actual image type you have before converting to Blob
+      const imageElement = await blobToImage(buffer, originalImageType);
       // Close the connection
       await connection.end();
       return imageElement;
@@ -78,17 +82,15 @@ export async function getEmoji(name: string): Promise<any>{
   }
 }
 
-async function blobToImage(blob: Blob, originalImageType: string): Promise<HTMLImageElement> {
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = (error) => reject(error);
-        image.src = reader.result as string;
-      };
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(blob);
+async function blobToImage(buffer: Buffer, originalImageType: string): Promise<Jimp> {
+    return new Promise<Jimp>((resolve, reject) => {
+      Jimp.read(buffer, (error, image) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(image);
+        }
+      });
     });
   }
 
