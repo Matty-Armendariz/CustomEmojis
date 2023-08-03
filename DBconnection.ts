@@ -60,17 +60,12 @@ export async function getEmoji(name: string): Promise<any>{
     // Return the emoji or null if no match was found
     if (rows) {
       console.log(rows);
-      const matchingString = rows[0][0].image.toString();
+      const imageUrl = rows[0][0].url.toString();
       // const matchingString = rows[0].image.toString('base64');
-      console.log(matchingString.type)
-      const buffer = Buffer.from(matchingString, 'base64');
-      // const myBlob = new Blob([matchingString], { type: 'text/plain' });
-      // Convert the Blob back to an Image
-      const originalImageType = 'image/png'; // Replace with the actual image type you have before converting to Blob
-      const imageElement = await blobToImage(buffer, originalImageType);
+      // const image = 
       // Close the connection
-      await connection.end();
-      return imageElement;
+      connection.end();
+      return rows[0][0];
     } else {
       // Close the connection
       await connection.end();

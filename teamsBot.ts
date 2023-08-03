@@ -19,9 +19,17 @@ export class TeamsBot extends TeamsActivityHandler {
     query: MessagingExtensionQuery
   ): Promise<MessagingExtensionResponse> {
     const searchQuery = query.parameters[0].value;
-    const response = getEmoji(searchQuery);
-
-    const attachments = [response[0].name];
+    const response = await getEmoji(searchQuery);
+    const attachments = [];
+    
+    const heroCard = CardFactory.heroCard(response.name, [response.url]);
+    const preview = CardFactory.heroCard(response.name, [response.url]);
+    preview.content.tap = {
+      type: "invoke",
+      value: { name: response.name, images: [response.url] }
+    };
+    const attachment = { ...heroCard, preview };
+    attachments.push(attachment);
 
     return {
       composeExtension: {
@@ -40,7 +48,7 @@ export class TeamsBot extends TeamsActivityHandler {
       composeExtension: {
         type: "result",
         attachmentLayout: "list",
-        attachments: [CardFactory.heroCard(obj.name, obj.description)],
+        attachments: [CardFactory.thumbnailCard(obj.name, obj.images)],
       },
     };
   }
