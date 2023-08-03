@@ -1,5 +1,5 @@
 import { default as axios } from "axios";
-import { getEmojis } from "./DBconnection"
+import { getEmoji } from "./DBconnection"
 import * as querystring from "querystring";
 import { TeamsActivityHandler, CardFactory, CardImage, TurnContext, MessagingExtensionQuery, MessagingExtensionResponse } from "botbuilder";
 
@@ -19,10 +19,9 @@ export class TeamsBot extends TeamsActivityHandler {
     query: MessagingExtensionQuery
   ): Promise<MessagingExtensionResponse> {
     const searchQuery = query.parameters[0].value;
-    const response = getEmojis(searchQuery);
+    const response = getEmoji(searchQuery);
 
-    const attachments = [];
-    console.log(response);
+    const attachments = [response[0].name];
 
     return {
       composeExtension: {

@@ -4,7 +4,7 @@ import mysql from 'mysql2/promise';
 interface EmojiData {
     id: number;
     name: string;
-    emoji: string;
+    image: string;
   }
 
 // Connection settings
@@ -24,7 +24,6 @@ async function executeQuery(query: string, params: any[] = []): Promise<any> {
 
   try {
     const rows = await connection.query(query, params);
-    console.log(rows);
     return rows;
   } catch (error) {
     throw error;
@@ -50,25 +49,27 @@ export async function getEmoji(name: string): Promise<any>{
     try{
     const connection = await pool.getConnection()
     // Define the SQL query
-    const query = 'SELECT * FROM your_table_name WHERE name = ?';
+    const query = 'SELECT * FROM emoji WHERE name =';
     
     const fullQuery = query 
     // Execute the query with the provided name as a parameter
     // const [rows] = await connection.execute<any[]>(query, [name]);
-    const rows = executeQuery(query + ' ' + name)
-
-    // Close the connection
-    await connection.end();
+    const rows = await executeQuery(query + ' \'' + name + '\'')
 
     // Return the emoji or null if no match was found
     if (rows) {
-      const matchingString = rows[0].emoji;
-      const myBlob = new Blob([matchingString], { type: 'text/plain' });
+      console.log(rows);
+      const matchingString = rows[0][0].image.toString();
+      // const myBlob = new Blob([matchingString], { type: 'text/plain' });
       // Convert the Blob back to an Image
       const originalImageType = 'image/jpeg'; // Replace with the actual image type you have before converting to Blob
-      const imageElement = await blobToImage(myBlob, originalImageType);
+      const imageElement = await blobToImage(matchingString, originalImageType);
+      // Close the connection
+      await connection.end();
       return imageElement;
     } else {
+      // Close the connection
+      await connection.end();
       return null;
     }
   } catch (error) {
@@ -96,10 +97,9 @@ async function blobToImage(blob: Blob, originalImageType: string): Promise<HTMLI
 async function exampleUsage() {
   try {
     const rows = await executeQuery('SELECT * FROM emoji');
-    console.log(rows);
   } catch (error) {
     console.error('Error executing query:', error);
   }
 }
 
-exampleUsage();
+// exampleUsage();
